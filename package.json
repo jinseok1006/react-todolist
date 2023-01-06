@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "gh-pages -d dist",
+    "predeploy": "npm run build"
   },
   "dependencies": {
     "@emotion/react": "^11.10.5",
@@ -21,6 +23,8 @@
     "@types/react": "^18.0.26",
     "@types/react-dom": "^18.0.9",
     "@vitejs/plugin-react": "^3.0.0",
+    "gh-pages": "^4.0.0",
     "vite": "^4.0.0"
-  }
+  },
+  "homepage": "http://jinseok1006.github.io/react-todolist"
 }
