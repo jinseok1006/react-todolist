@@ -1,10 +1,11 @@
 import React, { useReducer, useRef, useMemo, useCallback } from 'react';
-import useInputs from './../hooks/useInputs';
+import useInputs from '@/hooks/useInputs';
 
 import { Typography } from '@mui/material';
 
 import UserList from './UserList';
-import CreateUser from './CreateUser';
+import UserCreate from './UserCreate';
+import UserTemplate from './UserTemplate';
 
 function countActiveUsers(users) {
   console.log('count active users');
@@ -42,9 +43,11 @@ function User() {
   return (
     <UsersState.Provider value={users}>
       <UsersDispatch.Provider value={dispatch}>
-        <CreateUser />
-        <UserList users={users} />
-        <Typography>활성 사용자수: {activeUsers}</Typography>
+        <UserTemplate>
+          <UserCreate />
+          <UserList users={users} />
+          <Typography>활성 사용자수: {activeUsers}</Typography>
+        </UserTemplate>
       </UsersDispatch.Provider>
     </UsersState.Provider>
   );

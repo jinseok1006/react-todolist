@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { UsersDispatch } from './User';
+import { UsersDispatch } from './UserMangement';
 
 function UserList({ users }) {
   const dispatch = useContext(UsersDispatch);

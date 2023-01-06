@@ -19,11 +19,13 @@ import {
 
 import MenuIcon from '@mui/icons-material/Menu';
 
-import User from './components/User';
-import TodoMangement from './components/TodoMangement';
+import UserMangement from './components/UserMangement/UserMangement';
+import TodoMangement from './components/TodoMangement/TodoMangement';
+import Timetable from './components/Timetable/Timetable ';
 
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
+import SchoolIcon from '@mui/icons-material/School';
 
 const apps = [
   {
@@ -34,7 +36,12 @@ const apps = [
   {
     text: 'User Management',
     icon: <PersonSearchIcon />,
-    component: <User />,
+    component: <UserMangement />,
+  },
+  {
+    text: 'Syllabus Reader',
+    icon: <SchoolIcon />,
+    component: <Timetable />,
   },
 ];
 
@@ -43,20 +50,25 @@ const theme = createTheme({
     h6: {
       fontWeight: 500,
     },
+    subtitle2: {
+      color: 'grey',
+      fontSize: 13,
+      fontWeight: 500,
+    },
   },
 });
 
 const drawerWidth = 240;
 export default function App() {
-  const [selectedApp, setSelectedApp] = useState(0);
+  const [selectedApp, setSelectedApp] = useState(2);
 
   const onSelect = (id) => {
     setSelectedApp(id);
-    onToggle();
+    onToggle(false);
   };
 
   const [open, setOpen] = useState(false);
-  const onToggle = () => setOpen(!open);
+  const onToggle = (state) => setOpen(state);
 
   return (
     <ThemeProvider theme={theme}>
@@ -64,7 +76,7 @@ export default function App() {
       <AppBar sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar>
           <IconButton
-            onClick={onToggle}
+            onClick={() => onToggle(true)}
             color="inherit"
             edge="start"
             sx={{ display: { md: 'none' }, mr: 1 }}
@@ -81,12 +93,11 @@ export default function App() {
         component="main"
         sx={{
           ml: { md: `${drawerWidth}px` },
+          mt: { md: 5, xs: 3 },
         }}
       >
         <Toolbar />
-        <Container maxWidth="sm" sx={{ mt: 3, py: 2 }}>
-          {apps[selectedApp].component}
-        </Container>
+        {apps[selectedApp].component}
       </Box>
     </ThemeProvider>
   );
@@ -111,7 +122,7 @@ const ResponsiveDrawer = ({ children, open, onToggle }) => {
         varaint="temporary"
         anchor="top"
         open={open}
-        onClose={onToggle}
+        onClose={() => onToggle(false)}
         sx={{
           display: { xs: 'block', md: 'none' },
         }}

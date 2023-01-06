@@ -28,6 +28,8 @@ function todoReducer(state, action) {
       return state.map((todo) =>
         action.id === todo.id ? { ...todo, done: !todo.done } : todo
       );
+    case 'DELETE_DONE_ITEMS':
+      return state.filter((todo) => !todo.done);
     default:
       throw new Error(`unhandled action type: ${action.type}`);
   }

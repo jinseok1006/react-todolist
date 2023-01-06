@@ -1,10 +1,10 @@
 import React, { useContext, useRef, useCallback } from 'react';
 import { Box, Grid, TextField, Button } from '@mui/material';
 
-import { UsersDispatch, UsersState } from './User';
-import useInputs from '../hooks/useInputs';
+import { UsersDispatch, UsersState } from './UserMangement';
+import useInputs from '@/hooks/useInputs';
 
-function CreateUser() {
+function UserCreate() {
   const dispatch = useContext(UsersDispatch);
   const users = useContext(UsersState);
 
@@ -71,4 +71,4 @@ function CreateUser() {
   );
 }
 
-export default React.memo(CreateUser);
+export default React.memo(UserCreate);
