@@ -63,6 +63,7 @@ function TodoItem({ todo }) {
           <DeleteIcon />
         </IconButton>
       }
+      disablePadding
     >
       <ListItemButton onClick={() => onToggle(id)}>
         <ListItemIcon>

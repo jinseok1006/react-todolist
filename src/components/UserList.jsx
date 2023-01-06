@@ -62,6 +62,7 @@ const User = React.memo(function ({ user, onToggle, onDelete }) {
           <DeleteIcon />
         </IconButton>
       }
+      disablePadding
     >
       <ListItemButton dense onClick={() => onToggle(id)}>
         <ListItemText
