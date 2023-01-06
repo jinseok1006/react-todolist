@@ -97,8 +97,8 @@ function CreateTodo() {
   };
 
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={10}>
+    <Grid container spacing={1}>
+      <Grid item xs={12} sm={10}>
         <TextField
           size="small"
           fullWidth
@@ -109,7 +109,7 @@ function CreateTodo() {
           onChange={onChange}
         />
       </Grid>
-      <Grid item xs={2}>
+      <Grid item xs={12} sm={2}>
         <Button variant="contained" fullWidth onClick={onCreate}>
           CREATE
         </Button>
