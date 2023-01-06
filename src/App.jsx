@@ -15,9 +15,8 @@ import {
   Container,
   createTheme,
   ThemeProvider,
-  GlobalStyles,
 } from '@mui/material';
-import InboxIcon from '@mui/icons-material/Inbox';
+
 import MenuIcon from '@mui/icons-material/Menu';
 
 import User from './components/User';
@@ -30,27 +29,14 @@ const apps = [
   {
     text: 'TodoList',
     icon: <EventNoteIcon />,
+    component: <TodoMangement />,
   },
   {
     text: 'User Management',
     icon: <PersonSearchIcon />,
+    component: <User />,
   },
 ];
-
-function MyDrawer({ onToggle }) {
-  return (
-    <List>
-      {apps.map((app, i) => (
-        <ListItem key={i}>
-          <ListItemButton onClick={() => onToggle(i)}>
-            <ListItemIcon>{app.icon}</ListItemIcon>
-            <ListItemText primary={app.text} />
-          </ListItemButton>
-        </ListItem>
-      ))}
-    </List>
-  );
-}
 
 const theme = createTheme({
   typography: {
@@ -61,33 +47,24 @@ const theme = createTheme({
 });
 
 const drawerWidth = 240;
-function App() {
-  const [open, setOpen] = useState(false);
-  const onChange = () => setOpen(!open);
-
+export default function App() {
   const [selectedApp, setSelectedApp] = useState(0);
 
-  const SelectedApp = () => {
-    if (selectedApp === 0) {
-      return <User />;
-    } else {
-      return <TodoMangement />;
-    }
+  const onSelect = (id) => {
+    setSelectedApp(id);
+    onToggle();
   };
 
-  const onToggle = (id) => {
-    setSelectedApp(id);
-    onChange();
-  };
+  const [open, setOpen] = useState(false);
+  const onToggle = () => setOpen(!open);
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-
       <AppBar sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar>
           <IconButton
-            onClick={onChange}
+            onClick={onToggle}
             color="inherit"
             edge="start"
             sx={{ display: { md: 'none' }, mr: 1 }}
@@ -97,29 +74,9 @@ function App() {
           <Typography variant="h6">responsive ui</Typography>
         </Toolbar>
       </AppBar>
-      <Drawer
-        variant="permanent"
-        sx={{
-          '& > div': { width: `${drawerWidth}px` },
-          display: { xs: 'none', md: 'block' },
-        }}
-      >
-        <Toolbar />
-        <MyDrawer onToggle={onToggle} />
-      </Drawer>
-      <Drawer
-        varaint="temporary"
-        anchor="top"
-        open={open}
-        onClose={onChange}
-        sx={{
-          display: { xs: 'block', md: 'none' },
-          backgroundColor: '#f1f3f5',
-        }}
-      >
-        <Toolbar />
-        <MyDrawer onToggle={onToggle} />
-      </Drawer>
+      <ResponsiveDrawer open={open} onSelect={onSelect} onToggle={onToggle}>
+        <MyDrawerList onSelect={onSelect} />
+      </ResponsiveDrawer>
       <Box
         component="main"
         sx={{
@@ -128,10 +85,55 @@ function App() {
       >
         <Toolbar />
         <Container maxWidth="sm" sx={{ mt: 3, py: 2 }}>
-          <SelectedApp />
+          {apps[selectedApp].component}
         </Container>
       </Box>
     </ThemeProvider>
   );
 }
-export default App;
+const ResponsiveDrawer = ({ children, open, onToggle }) => {
+  // usemediaquery를 제거하는것이 옳은가?
+  // 그럼 결국 똑같은 컴포넌트를 두개생성해야되는데? -> 컴포넌트 합성해도 병신같은건 여전하다
+
+  return (
+    <>
+      <Drawer
+        variant="permanent"
+        sx={{
+          '& > div': { width: `${drawerWidth}px` },
+          display: { xs: 'none', md: 'block' },
+        }}
+      >
+        <Toolbar />
+        {children}
+      </Drawer>
+      <Drawer
+        varaint="temporary"
+        anchor="top"
+        open={open}
+        onClose={onToggle}
+        sx={{
+          display: { xs: 'block', md: 'none' },
+        }}
+      >
+        <Toolbar />
+        {children}
+      </Drawer>
+    </>
+  );
+};
+
+function MyDrawerList({ onSelect }) {
+  return (
+    <List>
+      {apps.map((app, i) => (
+        <ListItem key={i}>
+          <ListItemButton onClick={() => onSelect(i)}>
+            <ListItemIcon>{app.icon}</ListItemIcon>
+            <ListItemText primary={app.text} />
+          </ListItemButton>
+        </ListItem>
+      ))}
+    </List>
+  );
+}
