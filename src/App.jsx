@@ -15,7 +15,10 @@ import {
   Container,
   createTheme,
   ThemeProvider,
+  GlobalStyles,
 } from '@mui/material';
+
+import theme, { globalStyles } from './theme';
 
 import MenuIcon from '@mui/icons-material/Menu';
 
@@ -45,19 +48,6 @@ const apps = [
   },
 ];
 
-const theme = createTheme({
-  typography: {
-    h6: {
-      fontWeight: 500,
-    },
-    subtitle2: {
-      color: 'grey',
-      fontSize: 13,
-      fontWeight: 500,
-    },
-  },
-});
-
 const drawerWidth = 240;
 export default function App() {
   const [selectedApp, setSelectedApp] = useState(2);
@@ -73,13 +63,14 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <GlobalStyles styles={globalStyles} />
       <AppBar sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar>
           <IconButton
             onClick={() => onToggle(true)}
             color="inherit"
             edge="start"
-            sx={{ display: { md: 'none' }, mr: 1 }}
+            sx={{ display: { lg: 'none' }, mr: 1 }}
           >
             <MenuIcon />
           </IconButton>
@@ -92,8 +83,8 @@ export default function App() {
       <Box
         component="main"
         sx={{
-          ml: { md: `${drawerWidth}px` },
-          mt: { md: 5, xs: 3 },
+          ml: { lg: `${drawerWidth}px` },
+          py: { lg: 3, xs: 2 },
         }}
       >
         <Toolbar />
@@ -112,7 +103,7 @@ const ResponsiveDrawer = ({ children, open, onToggle }) => {
         variant="permanent"
         sx={{
           '& > div': { width: `${drawerWidth}px` },
-          display: { xs: 'none', md: 'block' },
+          display: { xs: 'none', lg: 'block' },
         }}
       >
         <Toolbar />
@@ -120,11 +111,11 @@ const ResponsiveDrawer = ({ children, open, onToggle }) => {
       </Drawer>
       <Drawer
         varaint="temporary"
-        anchor="top"
+        anchor="left"
         open={open}
         onClose={() => onToggle(false)}
         sx={{
-          display: { xs: 'block', md: 'none' },
+          display: { xs: 'block', lg: 'none' },
         }}
       >
         <Toolbar />

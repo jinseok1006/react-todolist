@@ -32,8 +32,8 @@ function User() {
   const [users, dispatch] = useReducer(reducer, [
     {
       id: 0,
-      username: 'jinseok',
-      email: 'jinseok@public.',
+      username: 'person',
+      email: 'person@public.',
       active: false,
     },
   ]);
