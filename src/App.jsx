@@ -31,7 +31,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 import UserMangement from './components/UserMangement/UserMangement';
 import TodoMangement from './components/TodoMangement/TodoMangement';
-import Timetable from './components/Timetable/Timetable';
+import LectureSearch from './components/Timetable/LectureSearch';
 import Users from './components/AsyncRequest/Users';
 
 const apps = [
@@ -48,7 +48,7 @@ const apps = [
   {
     text: 'Syllabus Reader',
     icon: <SchoolIcon />,
-    component: <Timetable />,
+    component: <LectureSearch />,
   },
   {
     text: 'Async Request',

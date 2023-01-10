@@ -1,232 +1,97 @@
-import {
-  Container,
-  List,
-  ListItem,
-  ListItemText,
-  Typography,
-  Stack,
-  Divider,
-  Box,
-  IconButton,
-  ListItemButton,
-  Fab,
-  Grid,
-  Paper,
-  TextField,
-  Select,
-  Button,
-  MenuItem,
-  Input,
-} from '@mui/material';
+import React from 'react';
 
-import React, { useEffect, useState } from 'react';
-import useAsync from '@/hooks/useAsync';
-import axios from 'axios';
+import { Box, Stack, Paper, styled } from '@mui/material';
+import { decodeSchedule } from './util';
 
-import FileOpenIcon from '@mui/icons-material/FileOpen';
+const weeks = ['일', '월', '화', '수', '목', '금', '토'];
+// const classes = Array.from({ length: 26 }, (_, i) => i);
 
-async function getSubjects() {
-  const response = await axios.get(
-    `${import.meta.env.VITE_BASE_PATH}/lectures.json`
-  );
-  return response.data;
-}
+// 13교시까지 표기하기에는 너무 정신사나운데 해결책이 없을까?
+const periods = Array.from({ length: 9 }, (_, i) => i).reduce(
+  (pre, cur) => [...pre, `${cur + 1}-A`, `${cur + 1}-B`],
+  []
+);
 
-function TimeTablePanel() {
+// 서치방식을 바꿔야만하는데.. 연타하면 CPU가 15%까지 올라간다...
+
+export default function Timetable({ selectedItem, lectures }) {
+  const schedules =
+    selectedItem !== null
+      ? decodeSchedule(lectures[selectedItem].schedule)
+      : null;
+
+  const getSelected = (row, col) => {
+    if (schedules) {
+      return schedules.some(
+        (schedule) => schedule.period === row && schedule.week === col
+      );
+    }
+    return false;
+  };
+
+  // return (
+  //   <Paper sx={{ p: 1 }}>
+  //     <Box>
+  //       <Stack direction="row">
+  //         <SelectedCell />
+  //         {weeks.map((col, i) => (
+  //           <SelectedCell key={i}>{col}</SelectedCell>
+  //         ))}
+  //       </Stack>
+  //       {classes.map((row, i) => (
+  //         <Stack direction="row" key={i}>
+  //           <SelectedCell>{row}</SelectedCell>
+  //           {weeks.map((col, j) => (
+  //             <SelectedCell key={j} selected={getSeleceted(i, col)} />
+  //           ))}
+  //         </Stack>
+  //       ))}
+  //     </Box>
+  //   </Paper>
+  // );
+
   return (
-    <Paper elevation={3} sx={{ p: 2 }}>
-      <Grid container spacing={1}>
-        <Grid item xs={4}>
-          <TextField select label="연도" size="small" fullWidth>
-            <MenuItem>Ten</MenuItem>
-          </TextField>
-        </Grid>
-        <Grid item xs={4}>
-          <TextField select label="학기" size="small" fullWidth>
-            <MenuItem>Ten</MenuItem>
-          </TextField>
-        </Grid>
-        <Grid item xs={4}>
-          <TextField select label="구분" size="small" fullWidth>
-            <MenuItem>Ten</MenuItem>
-          </TextField>
-        </Grid>
-        <Grid item xs={4}>
-          <TextField select label="대학" size="small" fullWidth>
-            <MenuItem>Ten</MenuItem>
-          </TextField>
-        </Grid>
-        <Grid item xs={4}>
-          <TextField select label="학과" size="small" fullWidth>
-            <MenuItem>Ten</MenuItem>
-          </TextField>
-        </Grid>
-        <Grid item xs={4}>
-          <TextField select label="학년" size="small" fullWidth>
-            <MenuItem>Ten</MenuItem>
-          </TextField>
-        </Grid>
-        <Grid item xs={12}>
-          <TextField label="교과목명" size="small" fullWidth />
-        </Grid>
-        <Grid item xs={12}>
-          <Input></Input>
-        </Grid>
-        <Grid item xs={12}>
-          <Button variant="contained" size="small" fullWidth>
-            search
-          </Button>
-        </Grid>
-      </Grid>
+    <Paper sx={{ p: 1 }}>
+      <Box component="table" sx={{ border: 1, borderCollapse: 'collapse' }}>
+        <thead>
+          <tr>
+            <th></th>
+            {weeks.map((col) => (
+              <Box key={col} component="th" sx={{ border: 1 }}>
+                {col}
+              </Box>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {periods.map((row, i) => (
+            <tr key={row}>
+              <SelectedCell>{row}</SelectedCell>
+              {weeks.map((col) => (
+                <SelectedCell key={col} selected={getSelected(i, col)} />
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </Box>
     </Paper>
   );
 }
 
-function SubjectList({ lectures, selectedItem, onSelect }) {
+function SelectedCell({ children, row, col, selected }) {
   return (
-    <Paper elevation={3}>
-      <List disablePadding dense>
-        {lectures.map((lect, i) => (
-          <LectureItem
-            key={i}
-            selectedItem={selectedItem}
-            id={i}
-            lect={lect}
-            onSelect={onSelect}
-          />
-        ))}
-      </List>
-    </Paper>
-  );
-}
-
-export default function Timetable() {
-  const [lecturesState, fetchLectures] = useAsync(getSubjects, [], false);
-
-  const [selectedItem, setSelectedItem] = useState(null);
-  const onSelect = (id) => setSelectedItem(id);
-
-  const { data: lectures, error, loading } = lecturesState;
-
-  console.log();
-
-  return (
-    <Container maxWidth="lg" sx={{ px: { xs: 0, sm: 2 } }}>
-      <Grid container spacing={2}>
-        <Grid
-          item
-          md={6}
-          xs={12}
-          sx={{
-            alignSelf: 'flex-start',
-            position: { md: 'sticky' },
-            top: { md: '4rem' },
-            order: { md: 1 },
-          }}
-        >
-          <TimeTablePanel />
-        </Grid>
-        <Grid item md={6} xs={12}>
-          {loading ? (
-            <div>로딩중</div>
-          ) : error ? (
-            <div>에러발생</div>
-          ) : !lectures ? null : (
-            <SubjectList
-              onSelect={onSelect}
-              selectedItem={selectedItem}
-              lectures={lectures}
-            />
-          )}
-        </Grid>
-      </Grid>
-
-      <Fab
-        sx={{ position: 'fixed', bottom: 30, right: 30 }}
-        disabled={selectedItem === null}
-        color="primary"
-      >
-        <FileOpenIcon />
-      </Fab>
-    </Container>
-  );
-}
-
-function LectureItem({ selectedItem, id, lect, onSelect }) {
-  return (
-    <ListItem
-      // secondaryAction={
-      //   <IconButton>
-      //     <FileOpenIcon />
-      //   </IconButton>
-      // }
-      disableGutters
+    <Box
+      component="td"
+      sx={{
+        display: 'table-cell',
+        textAlign: 'center',
+        width: '60px',
+        height: '25px',
+        border: selected ? null : 1,
+        backgroundColor: selected ? '#ffa8a8' : null,
+      }}
     >
-      <ListItemButton
-        onClick={() => onSelect(id)}
-        selected={id === selectedItem}
-      >
-        <LectureDetail lect={lect} />
-      </ListItemButton>
-    </ListItem>
-  );
-}
-
-function LectureDetail({ lect }) {
-  return (
-    <Box>
-      <Typography variant="subtitle1" fontSize={14}>
-        {lect.subjectName}
-      </Typography>
-      <Box>
-        <LectureSpan>{lect.professorName || '(공석)'}</LectureSpan>
-        <LectureSpan color emphasis>
-          {lect.engineeringVerification}
-        </LectureSpan>
-        <LectureSpan>{lect.lectureRoom}</LectureSpan>
-      </Box>
-      <Box>
-        <LectureSpan>{lect.public}</LectureSpan>
-        <LectureSpan>{lect.department || null}</LectureSpan>
-      </Box>
-      <Box>
-        <LectureSpan>{lect.subject}</LectureSpan>
-        <LectureSpan label="분반" color emphasis>
-          {lect.divisionNumber}
-        </LectureSpan>
-        <LectureSpan label="학점" color emphasis>
-          {lect.credit}
-        </LectureSpan>
-        <LectureSpan label="수강인원" color emphasis>
-          {lect.currentPersonnel}/{lect.allPersonnel}({lect.limitPersonnel})
-        </LectureSpan>
-        <LectureSpan>{lect.openLecture}</LectureSpan>
-      </Box>
-      <Box>
-        <LectureSpan>{lect.schedule}</LectureSpan>
-      </Box>
-    </Box>
-  );
-}
-
-function LectureSpan({ children, label, color, emphasis }) {
-  return (
-    <Box component="span" mr={1}>
-      {label ? (
-        <>
-          <Typography variant="subtitle2" component="span">
-            {label}
-          </Typography>{' '}
-        </>
-      ) : null}
-      <Typography
-        variant="subtitle2"
-        color={color ? 'primary' : 'grey'}
-        component="span"
-        fontWeight={emphasis ? 500 : null}
-      >
-        {children}
-      </Typography>
+      {children}
     </Box>
   );
 }
