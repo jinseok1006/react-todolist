@@ -16,20 +16,97 @@ import {
   Select,
   Button,
   MenuItem,
+  Input,
 } from '@mui/material';
-import React, { useState } from 'react';
 
-import lectureList from '@/assets/lect.json';
+import React, { useEffect, useState } from 'react';
+import useAsync from '@/hooks/useAsync';
+import axios from 'axios';
 
 import FileOpenIcon from '@mui/icons-material/FileOpen';
 
-export default function Timetable() {
-  const [items, setItems] = useState(
-    lectureList.map((lect, id) => ({ id, lect, document: null }))
+async function getSubjects() {
+  const response = await axios.get(
+    'http://192.168.0.12:5173/public/lectures.json'
   );
+  return response.data;
+}
+
+function TimeTablePanel() {
+  return (
+    <Paper elevation={3} sx={{ p: 2 }}>
+      <Grid container spacing={1}>
+        <Grid item xs={4}>
+          <TextField select label="연도" size="small" fullWidth>
+            <MenuItem>Ten</MenuItem>
+          </TextField>
+        </Grid>
+        <Grid item xs={4}>
+          <TextField select label="학기" size="small" fullWidth>
+            <MenuItem>Ten</MenuItem>
+          </TextField>
+        </Grid>
+        <Grid item xs={4}>
+          <TextField select label="구분" size="small" fullWidth>
+            <MenuItem>Ten</MenuItem>
+          </TextField>
+        </Grid>
+        <Grid item xs={4}>
+          <TextField select label="대학" size="small" fullWidth>
+            <MenuItem>Ten</MenuItem>
+          </TextField>
+        </Grid>
+        <Grid item xs={4}>
+          <TextField select label="학과" size="small" fullWidth>
+            <MenuItem>Ten</MenuItem>
+          </TextField>
+        </Grid>
+        <Grid item xs={4}>
+          <TextField select label="학년" size="small" fullWidth>
+            <MenuItem>Ten</MenuItem>
+          </TextField>
+        </Grid>
+        <Grid item xs={12}>
+          <TextField label="교과목명" size="small" fullWidth />
+        </Grid>
+        <Grid item xs={12}>
+          <Input></Input>
+        </Grid>
+        <Grid item xs={12}>
+          <Button variant="contained" size="small" fullWidth>
+            search
+          </Button>
+        </Grid>
+      </Grid>
+    </Paper>
+  );
+}
+
+function SubjectList({ lectures, selectedItem, onSelect }) {
+  return (
+    <Paper elevation={3}>
+      <List disablePadding dense>
+        {lectures.map((lect, i) => (
+          <LectureItem
+            key={i}
+            selectedItem={selectedItem}
+            id={i}
+            lect={lect}
+            onSelect={onSelect}
+          />
+        ))}
+      </List>
+    </Paper>
+  );
+}
+
+export default function Timetable() {
+  const [lecturesState, fetchLectures] = useAsync(getSubjects, [], false);
 
   const [selectedItem, setSelectedItem] = useState(null);
   const onSelect = (id) => setSelectedItem(id);
+
+  const { data: lectures, error, loading } = lecturesState;
 
   return (
     <Container maxWidth="lg" sx={{ px: { xs: 0, sm: 2 } }}>
@@ -45,63 +122,20 @@ export default function Timetable() {
             order: { md: 1 },
           }}
         >
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Grid container spacing={1}>
-              <Grid item xs={4}>
-                <TextField select label="연도" size="small" fullWidth>
-                  <MenuItem>Ten</MenuItem>
-                </TextField>
-              </Grid>
-              <Grid item xs={4}>
-                <TextField select label="학기" size="small" fullWidth>
-                  <MenuItem>Ten</MenuItem>
-                </TextField>
-              </Grid>
-              <Grid item xs={4}>
-                <TextField select label="구분" size="small" fullWidth>
-                  <MenuItem>Ten</MenuItem>
-                </TextField>
-              </Grid>
-              <Grid item xs={4}>
-                <TextField select label="대학" size="small" fullWidth>
-                  <MenuItem>Ten</MenuItem>
-                </TextField>
-              </Grid>
-              <Grid item xs={4}>
-                <TextField select label="학과" size="small" fullWidth>
-                  <MenuItem>Ten</MenuItem>
-                </TextField>
-              </Grid>
-              <Grid item xs={4}>
-                <TextField select label="학년" size="small" fullWidth>
-                  <MenuItem>Ten</MenuItem>
-                </TextField>
-              </Grid>
-              <Grid item xs={12}>
-                <TextField label="교과목명" size="small" fullWidth />
-              </Grid>
-              <Grid item xs={12}>
-                <Button variant="contained" fullWidth>
-                  search
-                </Button>
-              </Grid>
-            </Grid>
-          </Paper>
+          <TimeTablePanel />
         </Grid>
         <Grid item md={6} xs={12}>
-          <Paper elevation={3}>
-            <List disablePadding dense>
-              {lectureList.map((lect, i) => (
-                <LectureItem
-                  key={i}
-                  selectedItem={selectedItem}
-                  id={i}
-                  lect={lect}
-                  onSelect={onSelect}
-                />
-              ))}
-            </List>
-          </Paper>
+          {loading ? (
+            <div>로딩중</div>
+          ) : error ? (
+            <div>에러발생</div>
+          ) : !lectures ? null : (
+            <SubjectList
+              onSelect={onSelect}
+              selectedItem={selectedItem}
+              lectures={lectures}
+            />
+          )}
         </Grid>
       </Grid>
 

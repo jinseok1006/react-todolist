@@ -39,7 +39,7 @@ function TodoList() {
   const todos = useTodoState();
 
   return (
-    <List disablePadding>
+    <List disablePadding dense>
       {todos.map((todo) => (
         <TodoItem key={todo.id} todo={todo} />
       ))}
@@ -74,7 +74,11 @@ function TodoItem({ todo }) {
           <Checkbox edge="start" checked={done} />
         </ListItemIcon>
         <ListItemText
-          primary={<Typography sx={done ? doneStyle : null}>{text}</Typography>}
+          primary={
+            <Typography sx={done ? doneStyle : null} variant="body1">
+              {text}
+            </Typography>
+          }
         />
       </ListItemButton>
     </ListItem>

@@ -16,19 +16,23 @@ import {
   createTheme,
   ThemeProvider,
   GlobalStyles,
+  Slide,
 } from '@mui/material';
 
+import useScrollTrigger from '@mui/material/useScrollTrigger';
+
 import theme, { globalStyles } from './theme';
-
-import MenuIcon from '@mui/icons-material/Menu';
-
-import UserMangement from './components/UserMangement/UserMangement';
-import TodoMangement from './components/TodoMangement/TodoMangement';
-import Timetable from './components/Timetable/Timetable ';
 
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import SchoolIcon from '@mui/icons-material/School';
+import SendIcon from '@mui/icons-material/Send';
+import MenuIcon from '@mui/icons-material/Menu';
+
+import UserMangement from './components/UserMangement/UserMangement';
+import TodoMangement from './components/TodoMangement/TodoMangement';
+import Timetable from './components/Timetable/Timetable';
+import Users from './components/AsyncRequest/Users';
 
 const apps = [
   {
@@ -46,6 +50,11 @@ const apps = [
     icon: <SchoolIcon />,
     component: <Timetable />,
   },
+  {
+    text: 'Async Request',
+    icon: <SendIcon />,
+    component: <Users />,
+  },
 ];
 
 const drawerWidth = 240;
@@ -59,6 +68,8 @@ export default function App() {
 
   const [open, setOpen] = useState(false);
   const onToggle = (state) => setOpen(state);
+
+  const trigger = useScrollTrigger();
 
   return (
     <ThemeProvider theme={theme}>
