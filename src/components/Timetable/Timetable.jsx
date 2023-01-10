@@ -27,7 +27,7 @@ import FileOpenIcon from '@mui/icons-material/FileOpen';
 
 async function getSubjects() {
   const response = await axios.get(
-    'http://192.168.0.12:5173/public/lectures.json'
+    `${import.meta.env.VITE_BASE_PATH}/lectures.json`
   );
   return response.data;
 }
@@ -107,6 +107,8 @@ export default function Timetable() {
   const onSelect = (id) => setSelectedItem(id);
 
   const { data: lectures, error, loading } = lecturesState;
+
+  console.log();
 
   return (
     <Container maxWidth="lg" sx={{ px: { xs: 0, sm: 2 } }}>
